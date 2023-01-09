@@ -34,7 +34,7 @@ class radio1(gr.top_block):
         # Variables
         ##################################################
         self.samp_rate = samp_rate = 10e6
-        self.freq = freq = 95.7e6
+        self.freq = freq = 107.5e6
         self.channel_width = channel_width = 200e3
         self.center_freq = center_freq = 100e6
 
