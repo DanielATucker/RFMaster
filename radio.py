@@ -36,7 +36,7 @@ class radio(gr.top_block):
         self.volume = volume = 5
         self.freq = freq = 95.7e6
         self.fm_sample = fm_sample = 500e3
-        self.audio_rate = audio_rate = 3000000
+        self.audio_rate = audio_rate = 384000
 
         ##################################################
         # Blocks
