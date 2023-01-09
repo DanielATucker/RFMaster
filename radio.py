@@ -34,8 +34,7 @@ class radio(gr.top_block):
         # Variables
         ##################################################
         self.volume = volume = 5
-        self.sample_rate = sample_rate = 5e6
-        self.freq = freq = 107.5e6
+        self.freq = freq = 95.7e6
         self.fm_sample = fm_sample = 500e3
         self.audio_rate = audio_rate = 48e3
 
@@ -50,7 +49,7 @@ class radio(gr.top_block):
 
         self.soapy_hackrf_source_0 = soapy.source(dev, "fc32", 1, '',
                                   stream_args, tune_args, settings)
-        self.soapy_hackrf_source_0.set_sample_rate(0, sample_rate)
+        self.soapy_hackrf_source_0.set_sample_rate(0, audio_rate)
         self.soapy_hackrf_source_0.set_bandwidth(0, 0)
         self.soapy_hackrf_source_0.set_frequency(0, freq)
         self.soapy_hackrf_source_0.set_gain(0, 'AMP', False)
@@ -62,10 +61,10 @@ class radio(gr.top_block):
                 taps=[],
                 fractional_bw=0)
         self.low_pass_filter_0 = filter.fir_filter_ccf(
-            (int(sample_rate / fm_sample)),
+            (int(audio_rate / fm_sample)),
             firdes.low_pass(
                 1,
-                sample_rate,
+                audio_rate,
                 100e3,
                 10e3,
                 window.WIN_BLACKMAN,
@@ -97,14 +96,6 @@ class radio(gr.top_block):
         self.volume = volume
         self.analog_const_source_x_0.set_offset(self.volume)
 
-    def get_sample_rate(self):
-        return self.sample_rate
-
-    def set_sample_rate(self, sample_rate):
-        self.sample_rate = sample_rate
-        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.sample_rate, 100e3, 10e3, window.WIN_BLACKMAN, 6.76))
-        self.soapy_hackrf_source_0.set_sample_rate(0, self.sample_rate)
-
     def get_freq(self):
         return self.freq
 
@@ -123,6 +114,8 @@ class radio(gr.top_block):
 
     def set_audio_rate(self, audio_rate):
         self.audio_rate = audio_rate
+        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.audio_rate, 100e3, 10e3, window.WIN_BLACKMAN, 6.76))
+        self.soapy_hackrf_source_0.set_sample_rate(0, self.audio_rate)
 
 
 
