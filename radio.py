@@ -20,8 +20,7 @@ import signal
 from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
-import osmosdr
-import time
+from gnuradio import soapy
 
 
 
@@ -43,26 +42,25 @@ class radio(gr.top_block):
         ##################################################
         # Blocks
         ##################################################
+        self.soapy_hackrf_source_0 = None
+        dev = 'driver=hackrf'
+        stream_args = ''
+        tune_args = ['']
+        settings = ['']
+
+        self.soapy_hackrf_source_0 = soapy.source(dev, "fc32", 1, '',
+                                  stream_args, tune_args, settings)
+        self.soapy_hackrf_source_0.set_sample_rate(0, sample_rate)
+        self.soapy_hackrf_source_0.set_bandwidth(0, 0)
+        self.soapy_hackrf_source_0.set_frequency(0, freq)
+        self.soapy_hackrf_source_0.set_gain(0, 'AMP', False)
+        self.soapy_hackrf_source_0.set_gain(0, 'LNA', min(max(16, 0.0), 40.0))
+        self.soapy_hackrf_source_0.set_gain(0, 'VGA', min(max(16, 0.0), 62.0))
         self.rational_resampler_xxx_0 = filter.rational_resampler_fff(
                 interpolation=(int(audio_rate/1000)),
                 decimation=(int(fm_sample/10000)),
                 taps=[],
                 fractional_bw=0)
-        self.osmosdr_source_0 = osmosdr.source(
-            args="numchan=" + str(1) + " " + ''
-        )
-        self.osmosdr_source_0.set_time_unknown_pps(osmosdr.time_spec_t())
-        self.osmosdr_source_0.set_sample_rate(sample_rate)
-        self.osmosdr_source_0.set_center_freq(freq, 0)
-        self.osmosdr_source_0.set_freq_corr(0, 0)
-        self.osmosdr_source_0.set_dc_offset_mode(0, 0)
-        self.osmosdr_source_0.set_iq_balance_mode(0, 0)
-        self.osmosdr_source_0.set_gain_mode(False, 0)
-        self.osmosdr_source_0.set_gain(10, 0)
-        self.osmosdr_source_0.set_if_gain(20, 0)
-        self.osmosdr_source_0.set_bb_gain(20, 0)
-        self.osmosdr_source_0.set_antenna('', 0)
-        self.osmosdr_source_0.set_bandwidth(0, 0)
         self.low_pass_filter_0 = filter.fir_filter_ccf(
             (int(sample_rate / fm_sample)),
             firdes.low_pass(
@@ -88,8 +86,8 @@ class radio(gr.top_block):
         self.connect((self.analog_wfm_rcv_0, 0), (self.rational_resampler_xxx_0, 0))
         self.connect((self.blocks_multiply_xx_0, 0), (self.audio_sink_0, 0))
         self.connect((self.low_pass_filter_0, 0), (self.analog_wfm_rcv_0, 0))
-        self.connect((self.osmosdr_source_0, 0), (self.low_pass_filter_0, 0))
         self.connect((self.rational_resampler_xxx_0, 0), (self.blocks_multiply_xx_0, 0))
+        self.connect((self.soapy_hackrf_source_0, 0), (self.low_pass_filter_0, 0))
 
 
     def get_volume(self):
@@ -105,14 +103,14 @@ class radio(gr.top_block):
     def set_sample_rate(self, sample_rate):
         self.sample_rate = sample_rate
         self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.sample_rate, 100e3, 10e3, window.WIN_BLACKMAN, 6.76))
-        self.osmosdr_source_0.set_sample_rate(self.sample_rate)
+        self.soapy_hackrf_source_0.set_sample_rate(0, self.sample_rate)
 
     def get_freq(self):
         return self.freq
 
     def set_freq(self, freq):
         self.freq = freq
-        self.osmosdr_source_0.set_center_freq(self.freq, 0)
+        self.soapy_hackrf_source_0.set_frequency(0, self.freq)
 
     def get_fm_sample(self):
         return self.fm_sample
