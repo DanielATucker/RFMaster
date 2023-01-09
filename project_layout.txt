@@ -1,0 +1,47 @@
+RF Master
+    VHF (30-300MHz)        
+        HackRF
+            FM Broadcast
+                88-108Mhz
+                    SDR#
+
+    UHF (300-1000MHz)
+        HackRF
+            Car Remote Emulating
+                315MHz
+                    Universal Radio Hacker
+            NOAA Satellite Monitoring
+                375Mhz
+                    SDR#
+                    Orbitron
+                    wxToimg
+            Garage Door Hacking
+                433Mhz
+                    Universal Radio Hacker
+
+    L Band (1-2GHz)
+        HackRF
+            Aircraft Tracking
+                1090Mhz
+                    dump1090_SDRPlus
+            GPS Spoofing
+                1575.42Mhz
+                    gps-sdr-sim
+            Iridium Satellite Monitoring
+                1622Mhz
+                    GNU Radio
+                    gr-iridium
+                    iridium-toolkit
+
+    WIFI (2.4-5.8Ghz)
+        HackRF
+            Drone Takeover 
+                5.8GHZ
+                    HackRFmeetsDrone
+            WIFI Jamming
+                2.4-5.8MHz
+                    Modmobjam
+        WIFI Card
+            WIFI Hacking
+                2.4-5.8MHz
+                    aircrack-ng
